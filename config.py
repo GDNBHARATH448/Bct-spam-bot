@@ -1,6 +1,7 @@
+import os
 from os import getenv
-from data import THE_ALTS
 
+from decouple import config
 
 # VALUES REQUIRED FOR XBOTS
 API_ID = 18136872
