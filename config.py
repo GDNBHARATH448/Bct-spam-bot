@@ -1,12 +1,5 @@
-import logging
-
-from pyrogram import TelegramClient
-
 from os import getenv
-from Bctchinna.data import Bctchinna
-
-
-logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s', level=logging.WARNING)
+from data import THE_ALTS
 
 
 # VALUES REQUIRED FOR XBOTS
