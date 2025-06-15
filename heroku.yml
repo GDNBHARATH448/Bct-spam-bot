@@ -1,5 +1,5 @@
 build:
   docker:
-    Altron: Dockerfile
+    Bctchinna: Dockerfile
 run:
-  Altron: python3 -m main.py
+  Bctchinna: python3 -m main.py
