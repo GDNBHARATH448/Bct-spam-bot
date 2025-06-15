@@ -1,6 +1,6 @@
 import logging
 
-from telethon import TelegramClient
+from pyrogram import TelegramClient
 
 from os import getenv
 from Bctchinna.data import Bctchinna
