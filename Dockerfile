@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM nikolaik/python-nodejs:python3.10-nodejs19
 
 RUN apt update && apt upgrade -y
 RUN apt install git curl python3-pip -y
