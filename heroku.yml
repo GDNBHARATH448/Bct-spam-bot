@@ -1,5 +1,5 @@
 build:
   docker:
-    Bctchinna: Dockerfile
+      worker: Dockerfile
 run:
-  Bctchinna: python3 -m main.py
+  worker: python3 -m Bctchinna
