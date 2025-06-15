@@ -1,1 +1,1 @@
-worker: bash start 
+Bctchinna: python -m main.py
