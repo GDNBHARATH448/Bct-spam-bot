@@ -1,1 +1,1 @@
-worker: python -m Bctchinna 
+worker: bash start 
