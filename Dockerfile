@@ -1,10 +1,12 @@
 FROM nikolaik/python-nodejs:python3.10-nodejs19
 
-RUN apt update && apt upgrade -y
-RUN apt install git curl python3-pip -y
-RUN pip3 install -U pip
-RUN mkdir /app/
-WORKDIR /app/
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ffmpeg \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY . /app/
-RUN pip3 install -U -r requirements.txt
-CMD python3 Bctchinna 
+WORKDIR /app/
+RUN pip3 install --no-cache-dir -U -r requirements.txt
+
+CMD bash start
