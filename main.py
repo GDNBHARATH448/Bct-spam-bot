@@ -22,7 +22,7 @@ def load_plugins(plugin_name):
     load.logger = logging.getLogger(plugin_name)
     spec.loader.exec_module(load)
     sys.modules["Bctchinna.modules." + plugin_name] = load
-    print("Altron has Imported " + plugin_name)
+    print("Bctchinna has Imported " + plugin_name)
 
 
 files = glob.glob("Bctchinna/modules/*.py")
