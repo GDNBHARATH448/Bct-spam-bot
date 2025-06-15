@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String
-from AltronX.sql import BASE, SESSION
+from Bctchinna.sql import BASE, SESSION
 
 
 class ECHOSQL(BASE):
