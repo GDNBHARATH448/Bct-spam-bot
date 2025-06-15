@@ -1,5 +1,6 @@
 from telethon import events, Button
-from config import MK1, MK2, MK3, MK4, MK5, MK6, MK7, MK8, MK9, MK10
+ 
+from config import X1, X2, X3, X4, X5, X6, X7, X8, X9, X10
 from Bctchinna.modules.help import *
 import telethon
 
