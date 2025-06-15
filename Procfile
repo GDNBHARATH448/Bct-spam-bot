@@ -1,1 +1,1 @@
-Bctchinna: python -m main.py
+worker: python -m Bctchinna 
