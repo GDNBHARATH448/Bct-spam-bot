@@ -1,130 +1,91 @@
+import datetime
+import os
 import sys
-import heroku3
+import time
 
-from config import X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, OWNER_ID, SUDO_USERS, HEROKU_APP_NAME, HEROKU_API_KEY, CMD_HNDLR as hl
+from SukhPB.get_time import get_time
+from pyrogram import Client, filters
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
-from os import execl, getenv
-from pyrogram import events
-from datetime import datetime
+from Bctchinna import start_time
+from Bctchinna.Config import *
 
+from .. import SUDO_USERS as sudos
+from ..core.clients import *
 
-@X1.on(events.NewMessage(incoming=True, pattern=r"\%sping(?: |$)(.*)" % hl))
-@X2.on(events.NewMessage(incoming=True, pattern=r"\%sping(?: |$)(.*)" % hl))
-@X3.on(events.NewMessage(incoming=True, pattern=r"\%sping(?: |$)(.*)" % hl))
-@X4.on(events.NewMessage(incoming=True, pattern=r"\%sping(?: |$)(.*)" % hl))
-@X5.on(events.NewMessage(incoming=True, pattern=r"\%sping(?: |$)(.*)" % hl))
-@X6.on(events.NewMessage(incoming=True, pattern=r"\%sping(?: |$)(.*)" % hl))
-@X7.on(events.NewMessage(incoming=True, pattern=r"\%sping(?: |$)(.*)" % hl))
-@X8.on(events.NewMessage(incoming=True, pattern=r"\%sping(?: |$)(.*)" % hl))
-@X9.on(events.NewMessage(incoming=True, pattern=r"\%sping(?: |$)(.*)" % hl))
-@X10.on(events.NewMessage(incoming=True, pattern=r"\%sping(?: |$)(.*)" % hl))
-async def ping(e):
-    if e.sender_id in SUDO_USERS:
-        start = datetime.now()
-        altron = await e.reply(f"» __ᴀʟᴛʀᴏɴ__")
-        end = datetime.now()
-        mp = (end - start).microseconds / 1000
-        await altron.edit(f"__🤖 ᴘɪɴɢ__\n» `{mp} ᴍꜱ`")
+SUPPORT_CHAT_URL = "https://t.me/PBX_CHAT"
+UPDATE_CHANNEL_URL = "https://t.me/HEROKUBIN_01"
+
+if PING_PIC:
+    PING_PIC = PING_PIC
+else:
+    PING_PIC = "https://telegra.ph/file/c26f985c3f59004bc9927.jpg"
 
 
-@X1.on(events.NewMessage(incoming=True, pattern=r"\%sreboot(?: |$)(.*)" % hl))
-@X2.on(events.NewMessage(incoming=True, pattern=r"\%sreboot(?: |$)(.*)" % hl))
-@X3.on(events.NewMessage(incoming=True, pattern=r"\%sreboot(?: |$)(.*)" % hl))
-@X4.on(events.NewMessage(incoming=True, pattern=r"\%sreboot(?: |$)(.*)" % hl))
-@X5.on(events.NewMessage(incoming=True, pattern=r"\%sreboot(?: |$)(.*)" % hl))
-@X6.on(events.NewMessage(incoming=True, pattern=r"\%sreboot(?: |$)(.*)" % hl))
-@X7.on(events.NewMessage(incoming=True, pattern=r"\%sreboot(?: |$)(.*)" % hl))
-@X8.on(events.NewMessage(incoming=True, pattern=r"\%sreboot(?: |$)(.*)" % hl))
-@X9.on(events.NewMessage(incoming=True, pattern=r"\%sreboot(?: |$)(.*)" % hl))
-@X10.on(events.NewMessage(incoming=True, pattern=r"\%sreboot(?: |$)(.*)" % hl))
-async def restart(e):
-    if e.sender_id in SUDO_USERS:
-        await e.reply(f"`ʀᴇsᴛᴀʀᴛɪɴɢ ʙᴏᴛ...`")
-        try:
-            await X1.disconnect()
-        except Exception:
-            pass
-        try:
-            await X2.disconnect()
-        except Exception:
-            pass
-        try:
-            await X3.disconnect()
-        except Exception:
-            pass
-        try:
-            await X4.disconnect()
-        except Exception:
-            pass
-        try:
-            await X5.disconnect()
-        except Exception:
-            pass
-        try:
-            await X6.disconnect()
-        except Exception:
-            pass
-        try:
-            await X7.disconnect()
-        except Exception:
-            pass
-        try:
-            await X8.disconnect()
-        except Exception:
-            pass
-        try:
-            await X9.disconnect()
-        except Exception:
-            pass
-        try:
-            await X10.disconnect()
-        except Exception:
-            pass
+@Client.on_message(filters.user(sudos) & filters.command(["ping"], prefixes=HANDLER))
+async def ping(_, e: Message):
+    start = datetime.datetime.now()
+    uptime = get_time((time.time() - start_time))
+    user_mention = f"[{e.from_user.first_name}](tg://user?id={e.from_user.id})" if e.from_user else "User"
+    a = await e.reply_text("ᴘᴏɴɢ 👻")
+    end = datetime.datetime.now()
+    ms = (end - start).microseconds / 1000
 
-        execl(sys.executable, sys.executable, *sys.argv)
+    ping_temp = (
+        f"📌 ᴘɪɴɢ ᴘᴏɴɢ \n\n"
+        f"🧪 ᴘɪɴɢ: {ms} ms\n"
+        f"🌡️ ᴜᴘᴛɪᴍᴇ: {uptime}\n"
+        f"👻 ᴏᴡɴᴇʀ: {user_mention}"
+    )
 
+    # Inline Buttons
+    buttons = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton("✯ sᴜᴘᴘᴏʀᴛ ✯", url=SUPPORT_CHAT_URL),
+                InlineKeyboardButton("✯ ᴜᴘᴅᴀᴛᴇ ✯", url=UPDATE_CHANNEL_URL)
+            ]
+        ]
+    )
 
-@X1.on(events.NewMessage(incoming=True, pattern=r"\%ssudo(?: |$)(.*)" % hl))
-@X2.on(events.NewMessage(incoming=True, pattern=r"\%ssudo(?: |$)(.*)" % hl))
-@X3.on(events.NewMessage(incoming=True, pattern=r"\%ssudo(?: |$)(.*)" % hl))
-@X4.on(events.NewMessage(incoming=True, pattern=r"\%ssudo(?: |$)(.*)" % hl))
-@X5.on(events.NewMessage(incoming=True, pattern=r"\%ssudo(?: |$)(.*)" % hl))
-@X6.on(events.NewMessage(incoming=True, pattern=r"\%ssudo(?: |$)(.*)" % hl))
-@X7.on(events.NewMessage(incoming=True, pattern=r"\%ssudo(?: |$)(.*)" % hl))
-@X8.on(events.NewMessage(incoming=True, pattern=r"\%ssudo(?: |$)(.*)" % hl))
-@X9.on(events.NewMessage(incoming=True, pattern=r"\%ssudo(?: |$)(.*)" % hl))
-@X10.on(events.NewMessage(incoming=True, pattern=r"\%ssudo(?: |$)(.*)" % hl))
-async def addsudo(event):
-    if event.sender_id == OWNER_ID:
-        Heroku = heroku3.from_key(HEROKU_API_KEY)
-        sudousers = getenv("SUDO_USERS", default=None)
-
-        ok = await event.reply(f"» __ᴀᴅᴅɪɴɢ ᴜꜱᴇʀ ᴀꜱ ꜱᴜᴅᴏ...__")
-        target = ""
-        if HEROKU_APP_NAME is not None:
-            app = Heroku.app(HEROKU_APP_NAME)
-        else:
-            await ok.edit("`[HEROKU]:" "\nPlease Setup Your` **HEROKU_APP_NAME**")
-            return
-        heroku_var = app.config()
-        if event is None:
-            return
-        try:
-            reply_msg = await event.get_reply_message()
-            target = reply_msg.sender_id
-        except:
-            await ok.edit("» ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜꜱᴇʀ !!")
-            return
-
-        if str(target) in sudousers:
-            await ok.edit(f"ᴛʜɪꜱ ᴜꜱᴇʀ ɪꜱ ᴀʟʀᴇᴀᴅʏ ᴀ ꜱᴜᴅᴏ ᴜꜱᴇʀ !!")
-        else:
-            if len(sudousers) > 0:
-                newsudo = f"{sudousers} {target}"
+    await a.delete()
+    for i in range(1, 26):
+        lol = globals().get(f"Client{i}")
+        if lol is not None:
+            if ".jpg" in PING_PIC or ".png" in PING_PIC:
+                await lol.send_photo(
+                    e.chat.id,
+                    PING_PIC,
+                    caption=ping_temp,
+                    reply_markup=buttons,
+                )
+            elif ".mp4" in PING_PIC.lower():
+                await lol.send_video(
+                    e.chat.id,
+                    PING_PIC,
+                    caption=ping_temp,
+                    reply_markup=buttons,
+                )
             else:
-                newsudo = f"{target}"
-            await ok.edit(f"» **ɴᴇᴡ ꜱᴜᴅᴏ ᴜꜱᴇʀ**: `{target}`\n» `ʀᴇsᴛᴀʀᴛɪɴɢ ʙᴏᴛ...`")
-            heroku_var["SUDO_USERS"] = newsudo    
-    
-    elif event.sender_id in SUDO_USERS:
-        await event.reply("» ꜱᴏʀʀʏ, ᴏɴʟʏ ᴏᴡɴᴇʀ ᴄᴀɴ ᴀᴄᴄᴇꜱꜱ ᴛʜɪꜱ ᴄᴏᴍᴍᴀɴᴅ.")
+                await lol.send_message(
+                    e.chat.id,
+                    ping_temp,
+                    reply_markup=buttons,
+                )
+
+
+@Client.on_message(
+    filters.user(sudos) & filters.command(["restart", "reboot"], prefixes=HANDLER)
+)
+async def restarter(Bctchinna: Client, message: Message):
+    await message.reply_text(
+        f"**Bot Is Restarting**\n\n Please Wait 5 min till bot is restart.\nAfter 5 Min Type {HANDLER}ping"
+    )
+    try:
+        await Bctchinna.stop()
+    except Exception as error:
+        print(str(error))
+
+    args = [sys.executable, "-m", "Bctchinna"]
+    os.execl(sys.executable, *args)
+    quit()
