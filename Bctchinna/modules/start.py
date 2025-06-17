@@ -1,45 +1,56 @@
-from telethon import events, Button
- 
-from config import X1, X2, X3, X4, X5, X6, X7, X8, X9, X10
-from Bctchinna.modules.help import *
-import telethon
+import platform
 
-PythonButton = [
-        [
-        Button.inline("𝗛𝗘𝗟𝗣 𝗔𝗡𝗗 𝗖𝗢𝗠𝗠𝗔𝗡𝗗𝗦", data="help_back")
-        ],
-        [
-        Button.url("𝗨𝗣𝗗𝗔𝗧𝗘𝗦", "https://t.me/iam_chinna"),
-        Button.url("𝗦𝗨𝗣𝗣𝗢𝗥𝗧", "https://t.me/iam_chinna")
-        ],
-        [
-        Button.url("𝗥𝗘𝗣𝗢", "https://github.com/")
-        ]
-        ]
+from SukhPB.start import start_cmd
+from pyrogram import Client
+from pyrogram import __version__ as py_version
+from pyrogram import filters
+from pyrogram.types import InlineKeyboardMarkup, Message
+
+from Bctchinna.Config import *
+
+from ..core.clients import *
+
+if START_PIC:
+    START_PIC = START_PIC
+else:
+    START_PIC = "https://telegra.ph/file/6482940720892cb9a4479.jpg"
 
 
-@MK1.on(events.NewMessage(pattern="/start"))
-@MK2.on(events.NewMessage(pattern="/start"))
-@MK3.on(events.NewMessage(pattern="/start"))
-@MK4.on(events.NewMessage(pattern="/start"))
-@MK5.on(events.NewMessage(pattern="/start"))
-@MK6.on(events.NewMessage(pattern="/start"))
-@MK7.on(events.NewMessage(pattern="/start"))
-@MK7.on(events.NewMessage(pattern="/start"))
-@MK8.on(events.NewMessage(pattern="/start"))
-@MK9.on(events.NewMessage(pattern="/start"))
-@MK10.on(events.NewMessage(pattern="/start"))
-async def start(event):              
-    if event.is_private:
-        AltBot = await event.client.get_me()
-        BotName = AltBot.first_name
-        BotId = AltBot.id
-        TEXT = f"**𝗛𝗘𝗬 [{event.sender.first_name}](tg://user?id={event.sender.id}),\n\n𝗜 𝗔𝗠  [{BotName}](tg://user?id={BotId})​**\n━━━━━━━━━━━━━━━━━━━\n\n"
-        TEXT += f"» **✦ 𝗗𝗘𝗩𝗘𝗟𝗢𝗣𝗘𝗗 𝗕𝗬 :~ [Chinna](https://t.me/iam_chinna)**\n\n"
-        TEXT += f"» **𝗦𝗧𝗥𝗔𝗡𝗚𝗘𝗥 𝗦𝗣𝗔𝗠 𝗩𝗘𝗥𝗦𝗜𝗢𝗡 :** `3.2`\n"
-        TEXT += f"» **𝗧𝗘𝗟𝗘𝗧𝗛𝗢𝗡 𝗩𝗘𝗥𝗦𝗜𝗢𝗡:** `{telethon.__version__}`\n━━━━━━━━━━━━━━━━━"
-        await event.client.send_file(
-                event.chat_id,
-                "https://telegra.ph/file/05522e13c97752efe5e75.png",
-                caption=TEXT, 
-                buttons=PythonButton)
+@Client.on_message(filters.command(["start"], prefixes=HANDLER))
+async def _start(Bctchinna: Client, message: Message):
+    global START_MESSAGE
+    my_detail = await Bctchinna.get_me()
+    my_mention = my_detail.mention
+    if START_MESSAGE:
+        START_MESSAGE = START_MESSAGE
+    else:
+        START_MESSAGE = f"ʜᴇʏ💫 {message.from_user.mention}🌸\n✥ ɪ ᴀᴍ {my_mention}\n\n❖━━━━•❅•°•❈•°•❅•━━━━❖\n\n✥ **__ᴘʏʀᴏɢʀᴀᴍ ᴠᴇʀsɪᴏɴ__** = {py_version}\n✥ **__ᴘʏᴛʜᴏɴ ᴠᴇʀsɪᴏɴ__** = {platform.python_version()}\n✥ **__ʙᴏᴛsᴘᴀᴍ ᴠᴇʀsɪᴏɴ__** = {version}\n\n❖━━━━•❅•°•❈•°•❅•━━━━❖"
+    if ".jpg" in START_PIC or ".png" in START_PIC:
+        for i in range(1, 26):
+            lol = globals()[f"Client{i}"]
+            if lol is not None:
+                await lol.send_photo(
+                    message.chat.id,
+                    START_PIC,
+                    caption=START_MESSAGE,
+                    reply_markup=InlineKeyboardMarkup(await start_cmd(Bctchinna)),
+                )
+    elif ".mp4" in START_PIC.lower():
+        for i in range(1, 26):
+            lol = globals()[f"Client{i}"]
+            if lol is not None:
+                await lol.send_video(
+                    message.chat.id,
+                    START_PIC,
+                    caption=START_MESSAGE,
+                    reply_markup=InlineKeyboardMarkup(await start_cmd(Bctchinna)),
+                )
+    else:
+        for i in range(1, 26):
+            lol = globals()[f"Client{i}"]
+            if lol is not None:
+                await lol.send_message(
+                    message.chat.id,
+                    START_MESSAGE,
+                    reply_markup=InlineKeyboardMarkup(await start_cmd(Bctchinna)),
+             )
