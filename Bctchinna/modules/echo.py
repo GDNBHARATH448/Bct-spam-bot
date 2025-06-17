@@ -1,106 +1,41 @@
-import asyncio
-import base64
+import os
+import sys
+import heroku3
+from datetime import datetime
+from ..core.clients import *
+from pyrogram import Client, filters
+from pyrogram.types import *
+from pyrogram import Client, filters, enums
+from Bctchinna.Config import HEROKU_API_KEY, HEROKU_APP_NAME, HANDLER, OWNER_ID, SUDO_USERS
+from Bctchinna.Config import *
 
-from pyrogram import events
-from pyrogram.tl.functions.messages import ImportChatInviteRequest as Get
+@Client.on_message(filters.command("addsudo", prefixes=HANDLER) & filters.private)
+async def addsudo(client, message):
+    if message.from_user.id != OWNER_ID:
+        return await message.reply("✦ ꜱᴏʀʀʏ, ᴏɴʟʏ ᴏᴡɴᴇʀ ᴄᴀɴ ᴀᴄᴄᴇꜱꜱ ᴛʜɪꜱ ᴄᴏᴍᴍᴀɴᴅ.")
 
-from config import X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, SUDO_USERS, OWNER_ID, CMD_HNDLR as hl
-from Bctchinna.data import Bctchinna 
+    if not message.reply_to_message or not message.reply_to_message.from_user:
+        return await message.reply("✦ ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜꜱᴇʀ.")
 
-ECHO = []
+    target_id = message.reply_to_message.from_user.id
+    sudo_env = os.getenv("SUDO_USERS", "7694539822")
 
+    if str(target_id) in sudo_env.split():
+        return await message.reply("✦ ᴛʜɪꜱ ᴜꜱᴇʀ ɪꜱ ᴀʟʀᴇᴀᴅʏ ᴀ ꜱᴜᴅᴏ ᴜꜱᴇʀ !!")
 
-@X1.on(events.NewMessage(incoming=True, pattern=r"\%secho(?: |$)(.*)" % hl))
-@X2.on(events.NewMessage(incoming=True, pattern=r"\%secho(?: |$)(.*)" % hl))
-@X3.on(events.NewMessage(incoming=True, pattern=r"\%secho(?: |$)(.*)" % hl))
-@X4.on(events.NewMessage(incoming=True, pattern=r"\%secho(?: |$)(.*)" % hl))
-@X5.on(events.NewMessage(incoming=True, pattern=r"\%secho(?: |$)(.*)" % hl))
-@X6.on(events.NewMessage(incoming=True, pattern=r"\%secho(?: |$)(.*)" % hl))
-@X7.on(events.NewMessage(incoming=True, pattern=r"\%secho(?: |$)(.*)" % hl))
-@X8.on(events.NewMessage(incoming=True, pattern=r"\%secho(?: |$)(.*)" % hl))
-@X9.on(events.NewMessage(incoming=True, pattern=r"\%secho(?: |$)(.*)" % hl))
-@X10.on(events.NewMessage(incoming=True, pattern=r"\%secho(?: |$)(.*)" % hl))
-async def echo(event):
-    if event.sender_id in SUDO_USERS:
-        if event.reply_to_msg_id:
-            reply_msg = await event.get_reply_message()
-            user_id = reply_msg.sender_id
+    msg = await message.reply("✦ ᴀᴅᴅɪɴɢ ᴜꜱᴇʀ ᴀꜱ ꜱᴜᴅᴏ...")
 
-            if user_id in ALTRON:
-                await event.reply("ɴᴏ, ᴛʜɪꜱ ɢᴜʏ ɪꜱ ᴀʟᴛʀᴏɴ'ꜱ ᴏᴡɴᴇʀ.")
-            elif user_id == OWNER_ID:
-                await event.reply("ɴᴏ, ᴛʜɪꜱ ɢᴜʏ ɪꜱ ᴏᴡɴᴇʀ ᴏꜰ ᴛʜᴇꜱᴇ ʙᴏᴛꜱ.")
-            elif user_id in SUDO_USERS:
-                await event.reply("ɴᴏ, ᴛʜɪꜱ ɢᴜʏ ɪꜱ ᴀ ꜱᴜᴅᴏ ᴜꜱᴇʀ.")
-            else:
-                try:
-                    alt = Get(base64.b64decode('QFRoZUFsdHJvbg=='))
-                    await event.client(alt)
-                except BaseException:
-                    pass
+    if HEROKU_APP_NAME is None:
+        return await msg.edit("✦ `[HEROKU] ➥` Please set **HEROKU_APP_NAME** in your config.")
 
-                global ECHO
-                check = f"{user_id}_{event.chat_id}"
-                if check in ECHO:
-                    await event.reply("» ᴇᴄʜᴏ ɪꜱ ᴀʟʀᴇᴀᴅʏ ᴀᴄᴛɪᴠᴀᴛᴇᴅ ᴏɴ ᴛʜɪꜱ ᴜꜱᴇʀ !!")
-                else:
-                    ECHO.append(check)
-                    await event.reply("» ᴇᴄʜᴏ ᴀᴄᴛɪᴠᴀᴛᴇᴅ ᴏɴ ᴛʜᴇ ᴜꜱᴇʀ ✅")
-        else:
-            await event.reply(f"𝗘𝗰𝗵𝗼:\n  » {hl}echo <ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜꜱᴇʀ>")
+    try:
+        heroku = heroku3.from_key(HEROKU_API_KEY)
+        app = heroku.app(HEROKU_APP_NAME)
+        heroku_vars = app.config()
+    except Exception as e:
+        return await msg.edit(f"✦ Failed to connect to Heroku:\n`{e}`")
 
+    updated_sudo = f"{sudo_env} {target_id}".strip()
+    heroku_vars["SUDO_USERS"] = updated_sudo
 
-@X1.on(events.NewMessage(incoming=True, pattern=r"\%srmecho(?: |$)(.*)" % hl))
-@X2.on(events.NewMessage(incoming=True, pattern=r"\%srmecho(?: |$)(.*)" % hl))
-@X3.on(events.NewMessage(incoming=True, pattern=r"\%srmecho(?: |$)(.*)" % hl))
-@X4.on(events.NewMessage(incoming=True, pattern=r"\%srmecho(?: |$)(.*)" % hl))
-@X5.on(events.NewMessage(incoming=True, pattern=r"\%srmecho(?: |$)(.*)" % hl))
-@X6.on(events.NewMessage(incoming=True, pattern=r"\%srmecho(?: |$)(.*)" % hl))
-@X7.on(events.NewMessage(incoming=True, pattern=r"\%srmecho(?: |$)(.*)" % hl))
-@X8.on(events.NewMessage(incoming=True, pattern=r"\%srmecho(?: |$)(.*)" % hl))
-@X9.on(events.NewMessage(incoming=True, pattern=r"\%srmecho(?: |$)(.*)" % hl))
-@X10.on(events.NewMessage(incoming=True, pattern=r"\%srmecho(?: |$)(.*)" % hl))
-async def rmecho(event):
-    if event.sender_id in SUDO_USERS:
-        if event.reply_to_msg_id:
-            try:
-                alt = Get(base64.b64decode('QFRoZUFsdHJvbg=='))
-                await event.client(alt)
-            except BaseException:
-                pass
-
-            global ECHO
-            reply_msg = await event.get_reply_message()
-            check = f"{reply_msg.sender_id}_{event.chat_id}"
-
-            if check in ECHO:
-                ECHO.remove(check)
-                await event.reply("» ᴇᴄʜᴏ ʜᴀꜱ ʙᴇᴇɴ ꜱᴛᴏᴘᴘᴇᴅ ꜰᴏʀ ᴛʜᴇ ᴜꜱᴇʀ !! ☑️")
-            else:
-                await event.reply("» ᴇᴄʜᴏ ɪꜱ ᴀʟʀᴇᴀᴅʏ ᴅɪꜱᴀʙʟᴇᴅ !!")
-        else:
-            await event.reply(f"𝗥𝗲𝗺𝗼𝘃𝗲 𝗘𝗰𝗵𝗼:\n  » {hl}rmecho <ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴜꜱᴇʀ>")
-
-
-@X1.on(events.NewMessage(incoming=True))
-@X2.on(events.NewMessage(incoming=True))
-@X3.on(events.NewMessage(incoming=True))
-@X4.on(events.NewMessage(incoming=True))
-@X5.on(events.NewMessage(incoming=True))
-@X6.on(events.NewMessage(incoming=True))
-@X7.on(events.NewMessage(incoming=True))
-@X8.on(events.NewMessage(incoming=True))
-@X9.on(events.NewMessage(incoming=True))
-@X10.on(events.NewMessage(incoming=True))
-async def _(e):
-    global ECHO
-    check = f"{e.sender_id}_{e.chat_id}"
-    if check in ECHO:
-        try:
-            alt = Get(base64.b64decode('QFRoZUFsdHJvbg=='))
-            await e.client(alt)
-        except BaseException:
-            pass
-        if e.message.text or e.message.sticker:
-            await e.reply(e.message)
-            await asyncio.sleep(0.1)
+    await msg.edit(f"✦ **ɴᴇᴡ ꜱᴜᴅᴏ ᴜꜱᴇʀ** ➥ `{target_id}`")
